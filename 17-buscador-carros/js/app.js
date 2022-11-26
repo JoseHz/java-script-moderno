@@ -35,24 +35,40 @@ function readyStart() {
 
 
 
-  findCars();
+  findCars(autos);
   yearFilter();
 
   //functions
-  function findCars() {
+  function findCars(autos) {
+    clearTable();
 
+    const headerHTML = document.createElement('TR');
+    headerHTML.innerHTML = `
+    <tr >
+    <th>marca</th>
+    <th>modelo</th>
+    <th>aňo</th>
+    <th>precio</th>
+    <th>puertas</th>
+    <th>transmisión</th>
+    <th>color</th>
+    </tr>
+    `
+    results.appendChild(headerHTML);
     autos.forEach( car => {
-
+      
       const {marca, modelo, precio, year, puertas, color, transmision} = car;
-
+      
+      
       const carHTML = document.createElement('TR');
-
-        carHTML.innerHTML = `
+      carHTML.innerHTML = `
         <td>${marca}</td>
         <td>${modelo}</th>
         <td>${year}</td>
+        <td>${precio}</td>
         <td>${puertas}</td>
         <td>${transmision}</td>
+        <td>${color}</td>
         `;
 
         results.appendChild(carHTML);
@@ -73,16 +89,73 @@ function readyStart() {
     
     carFilter(e.target.id)
   }
+  function clearTable() {
+    while (results.firstChild) {
+      results.removeChild(results.firstChild);
+    }
+  }
 
   function carFilter() {
-    const carResults = autos.filter(filterMarca);
-    console.log(carResults)
+    const carResults = autos.filter(filterMarca).filter(filterYear).filter(filterMin).filter(filterMax).filter(numbersDoor).filter(transmisionFilter).filter(colorFilter);
+    
+    if (carResults) {
+      findCars(carResults);
+    } else {
+      noMatch();
+    }
+  }
+
+  function noMatch() {
+    const noResults = document.createElement('P');
   }
 
   function filterMarca(auto) {
     if (dataSearch.marca) {
       return auto.marca === dataSearch.marca;
     }
-    return auto
+    return auto;
+  }
+
+  function filterYear(auto) {
+      if (dataSearch.year) {
+        return auto.year === parseInt(dataSearch.year);
+      }
+      return auto;
+    }
+
+  function filterMin(auto) {
+    if (dataSearch.minimo) {
+      return auto.precio >= parseInt(dataSearch.minimo)
+    }
+    return auto;
+  }
+
+  function filterMax(auto) {
+    if (dataSearch.maximo) {
+      return auto.precio <= parseInt(dataSearch.maximo)
+    }
+    return auto;
+  }
+
+  function numbersDoor(auto) {
+    if (dataSearch.puertas) {
+      return auto.puertas === parseInt(dataSearch.puertas)
+    }
+    return auto;
+  }
+
+  function transmisionFilter(auto) {
+    if (dataSearch.transmision) {
+      return auto.transmision === dataSearch.transmision;
+    }
+    return auto;
+  }
+
+  function colorFilter(auto) {
+    if (dataSearch.color) {
+      return auto.color === dataSearch.color;
+    }
+    return auto;
   }
 }
+
